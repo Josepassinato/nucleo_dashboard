@@ -252,33 +252,33 @@ export default function LandingPage() {
           <div>
             <h4 className="font-bold mb-4">Produto</h4>
             <ul className="space-y-2 text-slate-400 text-sm">
-              <li><a href="#" className="hover:text-white">Features</a></li>
-              <li><a href="#" className="hover:text-white">Preços</a></li>
-              <li><a href="#" className="hover:text-white">Roadmap</a></li>
+              <li><a href="/landing#features" className="hover:text-white">Features</a></li>
+              <li><a href="/landing#pricing" className="hover:text-white">Preços</a></li>
+              <li><a href="/faq" className="hover:text-white">FAQ</a></li>
             </ul>
           </div>
           <div>
             <h4 className="font-bold mb-4">Empresa</h4>
             <ul className="space-y-2 text-slate-400 text-sm">
-              <li><a href="#" className="hover:text-white">Sobre</a></li>
-              <li><a href="#" className="hover:text-white">Blog</a></li>
-              <li><a href="#" className="hover:text-white">Contato</a></li>
+              <li><a href="/faq" className="hover:text-white">Sobre</a></li>
+              <li><a href="https://github.com/Josepassinato/nucleo-ventures" className="hover:text-white">Blog</a></li>
+              <li><a href="mailto:contato@nucleoventures.com" className="hover:text-white">Contato</a></li>
             </ul>
           </div>
           <div>
             <h4 className="font-bold mb-4">Legal</h4>
             <ul className="space-y-2 text-slate-400 text-sm">
-              <li><a href="#" className="hover:text-white">Privacidade</a></li>
-              <li><a href="#" className="hover:text-white">Termos</a></li>
-              <li><a href="#" className="hover:text-white">LGPD</a></li>
+              <li><a href="/faq" className="hover:text-white">Privacidade</a></li>
+              <li><a href="/faq" className="hover:text-white">Termos</a></li>
+              <li><a href="/faq" className="hover:text-white">LGPD</a></li>
             </ul>
           </div>
           <div>
             <h4 className="font-bold mb-4">Comunidade</h4>
             <ul className="space-y-2 text-slate-400 text-sm">
-              <li><a href="https://github.com/Josepassinato/nucleo-ventures" className="hover:text-white">GitHub</a></li>
-              <li><a href="#" className="hover:text-white">Discord</a></li>
-              <li><a href="#" className="hover:text-white">Twitter</a></li>
+              <li><a href="https://github.com/Josepassinato/nucleo-ventures" className="hover:text-white" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+              <li><a href="https://discord.gg/nucleoventures" className="hover:text-white" target="_blank" rel="noopener noreferrer">Discord</a></li>
+              <li><a href="https://twitter.com/nucleoventures" className="hover:text-white" target="_blank" rel="noopener noreferrer">Twitter</a></li>
             </ul>
           </div>
         </div>

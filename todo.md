@@ -52,3 +52,13 @@
 - [x] GitHub Repository com v1.0.0 Release
 - [x] QA Testing (43 testes, 100% sucesso)
 - [x] Documentação Completa (Guias, API, Testes)
+
+
+## Limpeza e QA (Prioridade Alta)
+
+- [x] Remover dados mockados de todas as páginas (LLMRouterDashboard)
+- [x] Corrigir botões que não funcionam (LandingPage footer links)
+- [ ] Testar fluxos de navegação
+- [ ] Validar formulários e inputs
+- [ ] Testar integração com backend
+- [ ] Verificar tratamento de erros
