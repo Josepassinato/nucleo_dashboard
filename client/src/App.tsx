@@ -8,6 +8,8 @@ import Home from "./pages/Home";
 import DashboardV2 from "./pages/DashboardV2";
 import OnboardingPage from "./pages/OnboardingPage";
 import LandingPage from "./pages/LandingPage";
+import Checkout from "./pages/Checkout";
+import Success from "./pages/Success";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -17,6 +19,8 @@ function Router() {
       <Route path={"/"} component={Home} />
       <Route path={"/v2"} component={DashboardV2} />
       <Route path={"/onboarding-new"} component={OnboardingPage} />
+      <Route path={"/checkout"} component={Checkout} />
+      <Route path={"/success"} component={Success} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />

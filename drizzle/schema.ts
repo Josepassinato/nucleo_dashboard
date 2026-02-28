@@ -25,4 +25,34 @@ export const users = mysqlTable("users", {
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
 
-// TODO: Add your tables here
+/**
+ * Stripe subscriptions table - stores only essential Stripe identifiers
+ * All other data (status, amounts, etc.) is fetched from Stripe API
+ */
+export const subscriptions = mysqlTable("subscriptions", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  stripeCustomerId: varchar("stripeCustomerId", { length: 255 }).notNull().unique(),
+  stripeSubscriptionId: varchar("stripeSubscriptionId", { length: 255 }).notNull().unique(),
+  planId: varchar("planId", { length: 255 }).notNull(), // starter, pro, enterprise, license
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Subscription = typeof subscriptions.$inferSelect;
+export type InsertSubscription = typeof subscriptions.$inferInsert;
+
+/**
+ * Stripe payment history - stores only essential payment identifiers
+ * All payment details are fetched from Stripe API
+ */
+export const payments = mysqlTable("payments", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  stripePaymentIntentId: varchar("stripePaymentIntentId", { length: 255 }).notNull().unique(),
+  planId: varchar("planId", { length: 255 }).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type Payment = typeof payments.$inferSelect;
+export type InsertPayment = typeof payments.$inferInsert;

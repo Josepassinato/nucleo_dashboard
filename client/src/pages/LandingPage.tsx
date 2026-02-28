@@ -216,15 +216,15 @@ export default function LandingPage() {
                     </li>
                   ))}
                 </ul>
-                <Button
-                  className={`w-full font-semibold ${
+                <Link href={`/checkout?plan=${plan.name.toLowerCase().replace(" ", "-")}`}>
+                  <a className={`block w-full text-center py-2 px-4 rounded-lg font-semibold transition ${
                     plan.highlighted
                       ? "bg-white text-emerald-600 hover:bg-slate-100"
                       : "bg-emerald-500 hover:bg-emerald-600 text-white"
-                  }`}
-                >
-                  {plan.cta}
-                </Button>
+                  }`}>
+                    {plan.cta}
+                  </a>
+                </Link>
               </motion.div>
             ))}
           </div>

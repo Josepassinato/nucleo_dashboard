@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users } from "../drizzle/schema";
+import { InsertUser, users, subscriptions, payments, InsertSubscription, InsertPayment } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -89,4 +89,74 @@ export async function getUserByOpenId(openId: string) {
   return result.length > 0 ? result[0] : undefined;
 }
 
-// TODO: add feature queries here as your schema grows.
+// Stripe subscription helpers
+export async function createSubscription(data: InsertSubscription) {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot create subscription: database not available");
+    return undefined;
+  }
+
+  try {
+    const result = await db.insert(subscriptions).values(data);
+    return result;
+  } catch (error) {
+    console.error("[Database] Failed to create subscription:", error);
+    throw error;
+  }
+}
+
+export async function getSubscriptionByUserId(userId: number) {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot get subscription: database not available");
+    return undefined;
+  }
+
+  try {
+    const result = await db
+      .select()
+      .from(subscriptions)
+      .where(eq(subscriptions.userId, userId))
+      .limit(1);
+    return result.length > 0 ? result[0] : undefined;
+  } catch (error) {
+    console.error("[Database] Failed to get subscription:", error);
+    throw error;
+  }
+}
+
+export async function createPayment(data: InsertPayment) {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot create payment: database not available");
+    return undefined;
+  }
+
+  try {
+    const result = await db.insert(payments).values(data);
+    return result;
+  } catch (error) {
+    console.error("[Database] Failed to create payment:", error);
+    throw error;
+  }
+}
+
+export async function getPaymentsByUserId(userId: number) {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot get payments: database not available");
+    return [];
+  }
+
+  try {
+    const result = await db
+      .select()
+      .from(payments)
+      .where(eq(payments.userId, userId));
+    return result;
+  } catch (error) {
+    console.error("[Database] Failed to get payments:", error);
+    throw error;
+  }
+}
