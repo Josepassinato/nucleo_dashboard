@@ -8,8 +8,8 @@ import Home from "./pages/Home";
 import Onboarding from "./pages/Onboarding";
 import DashboardV2 from "./pages/DashboardV2";
 
-
 function Router() {
+  // make sure to consider if you need authentication for certain routes
   return (
     <Switch>
       <Route path={"/"} component={Home} />
