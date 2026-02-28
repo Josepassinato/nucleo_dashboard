@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { trpc } from "@/lib/trpc";
+import { useExecutionMonitor } from "@/hooks/useExecutionMonitor";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -12,6 +13,8 @@ import {
   Zap,
   RotateCcw,
   Eye,
+  Wifi,
+  WifiOff,
 } from "lucide-react";
 
 interface ExecutionLog {
@@ -43,23 +46,22 @@ export default function ExecutionMonitor() {
   const { user, isAuthenticated } = useAuth();
   const [executions, setExecutions] = useState<Execution[]>([]);
   const [selectedExecution, setSelectedExecution] = useState<Execution | null>(null);
-  const [autoRefresh, setAutoRefresh] = useState(true);
+  const [useWebSocket, setUseWebSocket] = useState(true);
+  const [pollInterval, setPollInterval] = useState(2000);
 
-  const getExecutionsQuery = trpc.ceoAgent.getExecutions.useQuery();
-  const rollbackMutation = trpc.ceoAgent.rollbackExecution.useMutation();
+  // Get all executions
+  const getExecutionsQuery = trpc.ceoAgent.getExecutions.useQuery(undefined, {
+    staleTime: 1000,
+  });
 
-  // Auto-refresh every 2 seconds
-  useEffect(() => {
-    if (!autoRefresh) return;
+  // Use the execution monitor hook for selected execution
+  const executionMonitor = useExecutionMonitor({
+    executionId: selectedExecution?.id,
+    pollInterval,
+    useWebSocket,
+  });
 
-    const interval = setInterval(() => {
-      getExecutionsQuery.refetch();
-    }, 2000);
-
-    return () => clearInterval(interval);
-  }, [autoRefresh, getExecutionsQuery]);
-
-  // Update executions
+  // Update executions list
   useEffect(() => {
     if (getExecutionsQuery.data) {
       setExecutions(getExecutionsQuery.data);
@@ -70,12 +72,28 @@ export default function ExecutionMonitor() {
     }
   }, [getExecutionsQuery.data, selectedExecution]);
 
+  // Update selected execution with real-time data
+  useEffect(() => {
+    if (executionMonitor.execution) {
+      setSelectedExecution(executionMonitor.execution);
+      // Also update in the list
+      setExecutions((prev) =>
+        prev.map((e) =>
+          e.id === executionMonitor.execution?.id
+            ? executionMonitor.execution
+            : e
+        )
+      );
+    }
+  }, [executionMonitor.execution]);
+
   const handleRollback = async (executionId: number) => {
     if (!confirm("Tem certeza que deseja fazer rollback desta execução?")) return;
 
     try {
-      await rollbackMutation.mutateAsync({ executionId });
-      getExecutionsQuery.refetch();
+      await executionMonitor.rollback({ executionId });
+      // Refetch after rollback
+      await getExecutionsQuery.refetch();
     } catch (error) {
       console.error("Rollback error:", error);
     }
@@ -116,19 +134,34 @@ export default function ExecutionMonitor() {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-white mb-2">⚡ Execution Monitor</h1>
+          <div className="flex items-center justify-between mb-4">
+            <h1 className="text-4xl font-bold text-white">⚡ Execution Monitor</h1>
+            <div className="flex items-center gap-2">
+              {executionMonitor.isConnected ? (
+                <div className="flex items-center gap-2 px-3 py-2 bg-emerald-900/30 border border-emerald-500 rounded text-emerald-400 text-sm">
+                  <Wifi className="w-4 h-4" />
+                  WebSocket Conectado
+                </div>
+              ) : (
+                <div className="flex items-center gap-2 px-3 py-2 bg-yellow-900/30 border border-yellow-500 rounded text-yellow-400 text-sm">
+                  <WifiOff className="w-4 h-4" />
+                  Polling (Fallback)
+                </div>
+              )}
+            </div>
+          </div>
           <p className="text-slate-400">Monitore a execução em tempo real das propostas aprovadas</p>
         </div>
 
         {/* Controls */}
-        <div className="flex gap-2 mb-8">
+        <div className="flex gap-2 mb-8 flex-wrap">
           <Button
-            onClick={() => setAutoRefresh(!autoRefresh)}
-            variant={autoRefresh ? "default" : "outline"}
-            className={autoRefresh ? "bg-emerald-600 hover:bg-emerald-700" : ""}
+            onClick={() => setUseWebSocket(!useWebSocket)}
+            variant={useWebSocket ? "default" : "outline"}
+            className={useWebSocket ? "bg-blue-600 hover:bg-blue-700" : ""}
           >
-            <Zap className="w-4 h-4 mr-2" />
-            {autoRefresh ? "Auto-refresh ON" : "Auto-refresh OFF"}
+            <Wifi className="w-4 h-4 mr-2" />
+            {useWebSocket ? "WebSocket ON" : "WebSocket OFF"}
           </Button>
           <Button
             onClick={() => getExecutionsQuery.refetch()}
@@ -140,9 +173,41 @@ export default function ExecutionMonitor() {
             ) : (
               <Eye className="w-4 h-4 mr-2" />
             )}
-            Refresh
+            Refresh Execuções
           </Button>
+          <Button
+            onClick={() => executionMonitor.refetch()}
+            disabled={executionMonitor.isLoading}
+            variant="outline"
+          >
+            {executionMonitor.isLoading ? (
+              <Loader2 className="w-4 h-4 animate-spin mr-2" />
+            ) : (
+              <Eye className="w-4 h-4 mr-2" />
+            )}
+            Refresh Detalhes
+          </Button>
+          <div className="flex items-center gap-2">
+            <label className="text-sm text-slate-400">Poll Interval:</label>
+            <select
+              value={pollInterval}
+              onChange={(e) => setPollInterval(Number(e.target.value))}
+              className="px-2 py-1 bg-slate-700 border border-slate-600 rounded text-white text-sm"
+            >
+              <option value={1000}>1s</option>
+              <option value={2000}>2s</option>
+              <option value={5000}>5s</option>
+              <option value={10000}>10s</option>
+            </select>
+          </div>
         </div>
+
+        {/* Error Messages */}
+        {executionMonitor.error && (
+          <div className="mb-6 p-4 bg-red-900/30 border border-red-500 rounded text-red-300">
+            {executionMonitor.error}
+          </div>
+        )}
 
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Executions List */}
@@ -164,7 +229,7 @@ export default function ExecutionMonitor() {
                       }`}
                     >
                       <div className="flex items-center justify-between mb-2">
-                         <p className="font-semibold text-white text-sm">
+                        <p className="font-semibold text-white text-sm">
                           {execution.phaseName || "Fase Desconhecida"}
                         </p>
                         <span className={`${getStatusColor(execution.deployStatus)}`}>
@@ -194,7 +259,7 @@ export default function ExecutionMonitor() {
               <div className="space-y-6">
                 {/* Status Card */}
                 <Card className="bg-slate-800 border-slate-700 p-6">
-                    <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center justify-between mb-6">
                     <div>
                       <h2 className="text-2xl font-bold text-white">
                         {selectedExecution.phaseName || "Fase Desconhecida"}
@@ -203,7 +268,11 @@ export default function ExecutionMonitor() {
                         Fase {selectedExecution.phase || "?"}
                       </p>
                     </div>
-                    <div className={`text-4xl ${getStatusColor(selectedExecution.deployStatus || "pending")}`}>
+                    <div
+                      className={`text-4xl ${getStatusColor(
+                        selectedExecution.deployStatus || "pending"
+                      )}`}
+                    >
                       {getStatusIcon(selectedExecution.deployStatus || "pending")}
                     </div>
                   </div>
@@ -226,47 +295,71 @@ export default function ExecutionMonitor() {
                   <div className="grid grid-cols-2 gap-4 mb-6">
                     <div className="p-3 bg-slate-700/50 rounded">
                       <p className="text-xs text-slate-400 mb-1">Status</p>
-                      <p className={`${getStatusColor(selectedExecution.deployStatus || "pending")}`}>
+                      <p
+                        className={`${getStatusColor(
+                          selectedExecution.deployStatus || "pending"
+                        )}`}
+                      >
                         {(selectedExecution.deployStatus || "pending").toUpperCase()}
                       </p>
                     </div>
                     <div className="p-3 bg-slate-700/50 rounded">
                       <p className="text-xs text-slate-400 mb-1">Tempo Restante</p>
                       <p className="font-semibold text-white">
-                        {selectedExecution.estimatedTimeRemaining && selectedExecution.estimatedTimeRemaining > 0
-                          ? `${Math.ceil(selectedExecution.estimatedTimeRemaining / 60)}min`
+                        {selectedExecution.estimatedTimeRemaining &&
+                        selectedExecution.estimatedTimeRemaining > 0
+                          ? `${Math.ceil(
+                              selectedExecution.estimatedTimeRemaining / 60
+                            )}min`
                           : "Calculando..."}
                       </p>
                     </div>
                     <div className="p-3 bg-slate-700/50 rounded">
                       <p className="text-xs text-slate-400 mb-1">Testes</p>
-                      <p className={selectedExecution.testsPassed ? "text-emerald-400 font-semibold" : "text-red-400 font-semibold"}>
-                        {selectedExecution.testsPassed === true ? "✓ Passou" : "✗ Falhou"}
+                      <p
+                        className={
+                          selectedExecution.testsPassed
+                            ? "text-emerald-400 font-semibold"
+                            : "text-red-400 font-semibold"
+                        }
+                      >
+                        {selectedExecution.testsPassed === true
+                          ? "✓ Passou"
+                          : "✗ Falhou"}
                       </p>
                     </div>
                     <div className="p-3 bg-slate-700/50 rounded">
                       <p className="text-xs text-slate-400 mb-1">Rollback</p>
-                      <p className={selectedExecution.canRollback ? "text-emerald-400 font-semibold" : "text-slate-400 font-semibold"}>
-                        {selectedExecution.canRollback ? "✓ Disponível" : "✗ Indisponível"}
+                      <p
+                        className={
+                          selectedExecution.canRollback
+                            ? "text-emerald-400 font-semibold"
+                            : "text-slate-400 font-semibold"
+                        }
+                      >
+                        {selectedExecution.canRollback
+                          ? "✓ Disponível"
+                          : "✗ Indisponível"}
                       </p>
                     </div>
                   </div>
 
                   {/* Actions */}
-                  {selectedExecution.deployStatus === "failed" && selectedExecution.canRollback && (
-                    <Button
-                      onClick={() => handleRollback(selectedExecution.id)}
-                      disabled={rollbackMutation.isPending}
-                      className="w-full bg-red-600 hover:bg-red-700 text-white"
-                    >
-                      {rollbackMutation.isPending ? (
-                        <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                      ) : (
-                        <RotateCcw className="w-4 h-4 mr-2" />
-                      )}
-                      Fazer Rollback
-                    </Button>
-                  )}
+                  {selectedExecution.deployStatus === "failed" &&
+                    selectedExecution.canRollback && (
+                      <Button
+                        onClick={() => handleRollback(selectedExecution.id)}
+                        disabled={executionMonitor.isRollingBack}
+                        className="w-full bg-red-600 hover:bg-red-700 text-white"
+                      >
+                        {executionMonitor.isRollingBack ? (
+                          <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                        ) : (
+                          <RotateCcw className="w-4 h-4 mr-2" />
+                        )}
+                        Fazer Rollback
+                      </Button>
+                    )}
                 </Card>
 
                 {/* Logs */}

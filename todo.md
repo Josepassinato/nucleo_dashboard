@@ -62,3 +62,15 @@
 - [ ] Validar formulários e inputs
 - [ ] Testar integração com backend
 - [ ] Verificar tratamento de erros
+
+## Auto-Refresh ExecutionMonitor (Em Progresso)
+
+- [x] Criar Hook Custom useExecutionMonitor com Polling
+- [x] Implementar WebSocket Server para Execuções
+- [x] Atualizar ExecutionMonitor com Auto-Refresh
+- [x] Adicionar Indicadores de Status em Tempo Real (ExecutionStatusIndicator)
+- [x] Criar Timeline Visual para Fases (ExecutionTimeline)
+- [x] Escrever Testes Unitários (useExecutionMonitor, ExecutionStatusIndicator, ExecutionTimeline)
+- [ ] Testar WebSocket em Produção
+- [ ] Testar Polling Fallback
+- [ ] Publicar
