@@ -1,24 +1,22 @@
-import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
-import { Streamdown } from 'streamdown';
+import DashboardHeader from "@/components/DashboardHeader";
+import HeroBlock from "@/components/HeroBlock";
+import StatusCards from "@/components/StatusCards";
+import OrganizationalChart from "@/components/OrganizationalChart";
+import ActionTimeline from "@/components/ActionTimeline";
+import DashboardFooter from "@/components/DashboardFooter";
 
-/**
- * All content in this page are only for example, replace with your own feature implementation
- * When building pages, remember your instructions in Frontend Best Practices, Design Guide and Common Pitfalls
- */
 export default function Home() {
-  // If theme is switchable in App.tsx, we can implement theme toggling like this:
-  // const { theme, toggleTheme } = useTheme();
-
   return (
-    <div className="min-h-screen flex flex-col">
-      <main>
-        {/* Example: lucide-react for icons */}
-        <Loader2 className="animate-spin" />
-        Example Page
-        {/* Example: Streamdown for markdown rendering */}
-        <Streamdown>Any **markdown** content</Streamdown>
-        <Button variant="default">Example Button</Button>
+    <div className="min-h-screen bg-background text-foreground">
+      <DashboardHeader />
+
+      {/* Main content container */}
+      <main className="max-w-7xl mx-auto px-4 md:px-8 lg:px-12">
+        <HeroBlock />
+        <StatusCards />
+        <OrganizationalChart />
+        <ActionTimeline />
+        <DashboardFooter />
       </main>
     </div>
   );
