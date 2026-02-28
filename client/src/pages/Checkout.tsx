@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Loader2, CheckCircle, AlertCircle } from "lucide-react";
 import { useAuth } from "@/_core/hooks/useAuth";
+import { analytics } from "@/lib/analytics";
 
 export default function CheckoutPage() {
   const [, navigate] = useLocation();
@@ -22,8 +23,17 @@ export default function CheckoutPage() {
   useEffect(() => {
     if (!isAuthenticated) {
       navigate("/");
+    } else if (user) {
+      // Track checkout page view
+      analytics.trackPageView(`Checkout - ${planId}`);
+      analytics.trackEvent({
+        eventName: "checkout_page_view",
+        eventCategory: "checkout",
+        eventLabel: planId,
+        userId: user.id.toString(),
+      });
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, navigate, user, planId]);
 
   const handleCheckout = async () => {
     if (!user) return;
@@ -32,6 +42,15 @@ export default function CheckoutPage() {
     setError(null);
 
     try {
+      // Track checkout initiation
+      analytics.trackEvent({
+        eventName: "checkout_initiated",
+        eventCategory: "checkout",
+        eventLabel: planId,
+        userId: user.id.toString(),
+        metadata: { planId },
+      });
+
       const result = await createCheckout.mutateAsync({
         planId,
         successUrl: `${window.location.origin}/success?plan=${planId}`,
@@ -39,6 +58,14 @@ export default function CheckoutPage() {
       });
 
       if (result.url) {
+        // Track checkout session created
+        analytics.trackEvent({
+          eventName: "checkout_session_created",
+          eventCategory: "checkout",
+          eventLabel: planId,
+          userId: user.id.toString(),
+        });
+
         // Open checkout in new tab
         window.open(result.url, "_blank");
         // Optionally redirect after a delay
@@ -49,6 +76,15 @@ export default function CheckoutPage() {
     } catch (err) {
       console.error("Checkout error:", err);
       setError(err instanceof Error ? err.message : "Failed to create checkout session");
+
+      // Track checkout error
+      analytics.trackEvent({
+        eventName: "checkout_error",
+        eventCategory: "checkout",
+        eventLabel: planId,
+        userId: user.id.toString(),
+        metadata: { error: err instanceof Error ? err.message : "Unknown error" },
+      });
     } finally {
       setIsProcessing(false);
     }
@@ -111,7 +147,15 @@ export default function CheckoutPage() {
 
         <Button
           variant="outline"
-          onClick={() => navigate("/pricing")}
+          onClick={() => {
+            analytics.trackEvent({
+              eventName: "checkout_cancelled",
+              eventCategory: "checkout",
+              eventLabel: planId,
+              userId: user?.id.toString(),
+            });
+            navigate("/pricing");
+          }}
           className="w-full mt-3 border-slate-600 text-slate-300 hover:bg-slate-700"
         >
           Voltar

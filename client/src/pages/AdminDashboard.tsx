@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
+import { AdminDashboardSkeleton } from "@/components/AdminDashboardSkeleton";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import KPICard from "@/components/KPICard";
@@ -71,11 +72,7 @@ export default function AdminDashboard() {
   }
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-emerald-400" />
-      </div>
-    );
+    return <AdminDashboardSkeleton />;
   }
 
   const metricsSummary = metrics.data;

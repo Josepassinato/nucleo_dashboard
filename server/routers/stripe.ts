@@ -2,6 +2,7 @@ import { protectedProcedure, publicProcedure, router } from "../_core/trpc";
 import { z } from "zod";
 import Stripe from "stripe";
 import { createSubscription, getSubscriptionByUserId, getPaymentsByUserId, createPayment } from "../db";
+import { sendPaymentNotificationEmail, notifyAdminPayment } from "../_core/emailNotification";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
@@ -184,6 +185,7 @@ export async function handleStripeWebhook(
       if (session.client_reference_id && session.metadata?.planId) {
         const userId = parseInt(session.client_reference_id);
         const planId = session.metadata.planId;
+        const plan = PRICING_PLANS[planId as keyof typeof PRICING_PLANS];
 
         try {
           // Create subscription record
@@ -193,6 +195,30 @@ export async function handleStripeWebhook(
             stripeSubscriptionId: session.subscription as string,
             planId,
           });
+
+          // Send confirmation email
+          if (session.customer_email && plan) {
+            await sendPaymentNotificationEmail({
+              userEmail: session.customer_email,
+              userName: session.metadata?.userName || "Customer",
+              planName: plan.name,
+              amount: plan.price,
+              currency: "R$",
+              eventType: "subscription_created",
+              invoiceUrl: session.invoice ? `https://invoice.stripe.com/${session.invoice}` : undefined,
+              nextBillingDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+            });
+
+            // Notify admin
+            await notifyAdminPayment({
+              userEmail: session.customer_email,
+              userName: session.metadata?.userName || "Unknown",
+              planName: plan.name,
+              amount: plan.price,
+              currency: "R$",
+              eventType: "subscription_created",
+            });
+          }
 
           console.log("[Stripe Webhook] Subscription created for user:", userId);
         } catch (error) {
@@ -205,21 +231,75 @@ export async function handleStripeWebhook(
     case "invoice.paid": {
       const invoice = event.data.object as Stripe.Invoice;
       console.log("[Stripe Webhook] Invoice paid:", invoice.id);
-      // Payment confirmed - can trigger fulfillment here
+      
+      // Send payment confirmation email
+      if (invoice.customer_email && (invoice as any).subscription) {
+        try {
+          const subscription = await stripe.subscriptions.retrieve((invoice as any).subscription as string);
+          const planId = subscription.metadata?.planId || "unknown";
+          const plan = PRICING_PLANS[planId as keyof typeof PRICING_PLANS];
+          
+          await sendPaymentNotificationEmail({
+            userEmail: invoice.customer_email,
+            userName: subscription.metadata?.userName || "Customer",
+            planName: plan?.name || "Subscription",
+            amount: (invoice.amount_paid || 0) / 100,
+            currency: "R$",
+            eventType: "payment_success",
+            invoiceUrl: invoice.hosted_invoice_url || undefined,
+            nextBillingDate: new Date((subscription as any).current_period_end * 1000),
+          });
+        } catch (error) {
+          console.error("[Stripe Webhook] Failed to send payment email:", error);
+        }
+      }
       break;
     }
 
     case "invoice.payment_failed": {
       const invoice = event.data.object as Stripe.Invoice;
       console.log("[Stripe Webhook] Invoice payment failed:", invoice.id);
-      // Notify user of payment failure
+      
+      // Send payment failure email
+      if (invoice.customer_email && (invoice as any).subscription) {
+        try {
+          const subscription = await stripe.subscriptions.retrieve((invoice as any).subscription as string);
+          const planId = subscription.metadata?.planId || "unknown";
+          const plan = PRICING_PLANS[planId as keyof typeof PRICING_PLANS];
+          
+          await sendPaymentNotificationEmail({
+            userEmail: invoice.customer_email,
+            userName: subscription.metadata?.userName || "Customer",
+            planName: plan?.name || "Subscription",
+            amount: (invoice.amount_due || 0) / 100,
+            currency: "R$",
+            eventType: "payment_failed",
+          });
+        } catch (error) {
+          console.error("[Stripe Webhook] Failed to send failure email:", error);
+        }
+      }
       break;
     }
 
     case "customer.subscription.deleted": {
       const subscription = event.data.object as Stripe.Subscription;
       console.log("[Stripe Webhook] Subscription deleted:", subscription.id);
-      // Handle subscription cancellation
+      
+      // Send cancellation email
+      if (subscription.customer && typeof subscription.customer === "object" && "email" in subscription.customer) {
+        const planId = subscription.metadata?.planId || "unknown";
+        const plan = PRICING_PLANS[planId as keyof typeof PRICING_PLANS];
+        
+        await sendPaymentNotificationEmail({
+          userEmail: subscription.customer.email as string,
+          userName: subscription.metadata?.userName || "Customer",
+          planName: plan?.name || "Subscription",
+          amount: plan?.price || 0,
+          currency: "R$",
+          eventType: "subscription_cancelled",
+        });
+      }
       break;
     }
 
