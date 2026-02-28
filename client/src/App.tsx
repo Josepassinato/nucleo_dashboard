@@ -14,6 +14,7 @@ import Payments from "./pages/Payments";
 import AdminDashboard from "./pages/AdminDashboard";
 import FAQ from "./pages/FAQ";
 import OnboardingInteractive from "./pages/OnboardingInteractive";
+import CEODirectives from "./pages/CEODirectives";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -29,6 +30,7 @@ function Router() {
       <Route path={"/admin"} component={AdminDashboard} />
       <Route path={"/faq"} component={FAQ} />
       <Route path={"/onboarding-interactive"} component={OnboardingInteractive} />
+      <Route path={"/ceo-directives"} component={CEODirectives} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />

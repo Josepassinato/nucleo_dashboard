@@ -17,6 +17,17 @@
 - [ ] Implementar Predictive Churn (ML model, at-risk dashboard)
 - [ ] Implementar Email Sequence de Onboarding (dias 1, 3, 7, 14)
 
+## CEO ↔ CTO Agent System (Nova Feature)
+
+- [x] Expandir Schema para CEO Directives, CTO Proposals, Executions
+- [x] Criar CEO Chat Interface (texto + áudio)
+- [x] Implementar CTO Agent com LLM (análise e proposta)
+- [ ] Criar Code Generation Engine
+- [ ] Implementar Testing & Deployment Automation
+- [ ] Criar Monitoring Dashboard em Tempo Real
+- [ ] Implementar Rollback Automático
+- [ ] Integrar e Testar End-to-End
+
 ## Features Concluídas
 
 - [x] Autenticação OAuth com Manus

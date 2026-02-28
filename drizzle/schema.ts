@@ -216,3 +216,214 @@ export const churnPredictions = mysqlTable("churnPredictions", {
 
 export type ChurnPrediction = typeof churnPredictions.$inferSelect;
 export type InsertChurnPrediction = typeof churnPredictions.$inferInsert;
+
+/**
+ * CEO Chat Messages - stores conversations between user and CEO agent
+ */
+export const ceoMessages = mysqlTable("ceoMessages", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  // Message content
+  role: mysqlEnum("role", ["user", "ceo"]).notNull(), // who sent the message
+  messageType: mysqlEnum("messageType", ["text", "audio", "transcribed_audio"]).notNull(),
+  content: text("content").notNull(), // text or transcribed audio
+  // Audio metadata
+  audioUrl: varchar("audioUrl", { length: 1024 }), // S3 URL
+  audioTranscript: text("audioTranscript"), // transcribed text
+  audioLanguage: varchar("audioLanguage", { length: 10 }).default("pt-BR"),
+  // Strategic command detection
+  isStrategicCommand: boolean("isStrategicCommand").default(false),
+  commandType: varchar("commandType", { length: 255 }), // change_business_model, adjust_team, etc
+  commandConfidence: int("commandConfidence").default(0), // 0-100
+  // Timestamps
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type CeoMessage = typeof ceoMessages.$inferSelect;
+export type InsertCeoMessage = typeof ceoMessages.$inferInsert;
+
+/**
+ * Strategic Commands - parsed strategic directives from user
+ */
+export const strategicCommands = mysqlTable("strategicCommands", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  messageId: int("messageId").notNull().references(() => ceoMessages.id, { onDelete: "cascade" }),
+  // Command details
+  commandType: varchar("commandType", { length: 255 }).notNull(), // change_business_model, adjust_team, etc
+  commandDescription: text("commandDescription").notNull(),
+  // Business context
+  currentBusinessModel: varchar("currentBusinessModel", { length: 255 }), // e-commerce, saas, etc
+  newBusinessModel: varchar("newBusinessModel", { length: 255 }), // seguros, etc
+  targetMarkets: text("targetMarkets"), // JSON array of markets
+  targetChannels: text("targetChannels"), // JSON array of channels (redes sociais, etc)
+  // CEO Analysis
+  ceoAnalysis: text("ceoAnalysis"), // CEO's understanding of the command
+  requiredInteractions: text("requiredInteractions"), // JSON array of required integrations
+  actionPlan: text("actionPlan"), // JSON structured action plan
+  estimatedTimeframe: varchar("estimatedTimeframe", { length: 255 }), // 1 week, 2 weeks, etc
+  // Status
+  status: mysqlEnum("status", ["pending", "in_progress", "completed", "failed"]).default("pending"),
+  executionStartedAt: timestamp("executionStartedAt"),
+  executionCompletedAt: timestamp("executionCompletedAt"),
+  // Timestamps
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type StrategicCommand = typeof strategicCommands.$inferSelect;
+export type InsertStrategicCommand = typeof strategicCommands.$inferInsert;
+
+/**
+ * Audio Recordings - stores raw audio files metadata
+ */
+export const audioRecordings = mysqlTable("audioRecordings", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  messageId: int("messageId").notNull().references(() => ceoMessages.id, { onDelete: "cascade" }),
+  // Audio metadata
+  audioUrl: varchar("audioUrl", { length: 1024 }).notNull(), // S3 URL
+  audioKey: varchar("audioKey", { length: 255 }).notNull(), // S3 key for deletion
+  audioDuration: int("audioDuration").notNull(), // seconds
+  audioFormat: varchar("audioFormat", { length: 10 }).notNull(), // mp3, wav, webm, etc
+  audioSize: int("audioSize").notNull(), // bytes
+  // Transcription
+  transcriptText: text("transcriptText"),
+  transcriptLanguage: varchar("transcriptLanguage", { length: 10 }).default("pt-BR"),
+  transcriptionConfidence: int("transcriptionConfidence").default(0), // 0-100
+  transcriptionModel: varchar("transcriptionModel", { length: 255 }).default("whisper-1"),
+  // Processing status
+  processingStatus: mysqlEnum("processingStatus", ["pending", "transcribing", "completed", "failed"]).default("pending"),
+  processingError: text("processingError"),
+  // Timestamps
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type AudioRecording = typeof audioRecordings.$inferSelect;
+export type InsertAudioRecording = typeof audioRecordings.$inferInsert;
+
+
+/**
+ * CEO Directives - Strategic directions from CEO
+ */
+export const ceoDirectives = mysqlTable("ceoDirectives", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  
+  // Content
+  directive: text("directive").notNull(),
+  audioUrl: varchar("audioUrl", { length: 1024 }),
+  audioTranscript: text("audioTranscript"),
+  
+  // Analysis
+  strategicDirection: varchar("strategicDirection", { length: 255 }),
+  businessModel: varchar("businessModel", { length: 255 }),
+  targetMarkets: text("targetMarkets"), // JSON array
+  targetChannels: text("targetChannels"), // JSON array
+  
+  // Status
+  status: mysqlEnum("status", ["pending", "approved", "rejected", "in_progress", "completed"]).default("pending"),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type CeoDirective = typeof ceoDirectives.$inferSelect;
+export type InsertCeoDirective = typeof ceoDirectives.$inferInsert;
+
+/**
+ * CTO Proposals - Technical proposals from CTO Agent
+ */
+export const ctoProposals = mysqlTable("ctoProposals", {
+  id: int("id").autoincrement().primaryKey(),
+  directiveId: int("directiveId").notNull().references(() => ceoDirectives.id, { onDelete: "cascade" }),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  
+  // Proposal
+  architecture: text("architecture"),
+  integrations: text("integrations"), // JSON array
+  features: text("features"), // JSON array
+  executionPlan: text("executionPlan"), // JSON array
+  
+  // Estimates
+  totalEstimatedHours: int("totalEstimatedHours"),
+  estimatedDays: int("estimatedDays"),
+  risks: text("risks"), // JSON array
+  recommendations: text("recommendations"), // JSON array
+  
+  // Status
+  status: mysqlEnum("status", ["pending", "approved", "rejected", "in_progress"]).default("pending"),
+  approvedAt: timestamp("approvedAt"),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type CtoProposal = typeof ctoProposals.$inferSelect;
+export type InsertCtoProposal = typeof ctoProposals.$inferInsert;
+
+/**
+ * CTO Executions - Code generation and deployment executions
+ */
+export const ctoExecutions = mysqlTable("ctoExecutions", {
+  id: int("id").autoincrement().primaryKey(),
+  proposalId: int("proposalId").notNull().references(() => ctoProposals.id, { onDelete: "cascade" }),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  
+  // Execution phase
+  phase: int("phase"),
+  phaseName: varchar("phaseName", { length: 255 }),
+  tasks: text("tasks"), // JSON array
+  
+  // Generated code
+  generatedCode: text("generatedCode"),
+  codeLanguage: varchar("codeLanguage", { length: 50 }),
+  filePath: varchar("filePath", { length: 255 }),
+  
+  // Tests
+  testResults: text("testResults"), // JSON
+  testsPassed: boolean("testsPassed").default(false),
+  testsCoverage: int("testsCoverage").default(0),
+  
+  // Deploy
+  deployStatus: mysqlEnum("deployStatus", ["pending", "deploying", "deployed", "failed"]).default("pending"),
+  deployLog: text("deployLog"),
+  
+  // Rollback
+  canRollback: boolean("canRollback").default(false),
+  rollbackCommitHash: varchar("rollbackCommitHash", { length: 255 }),
+  
+  // Progress
+  progressPercent: int("progressPercent").default(0),
+  estimatedTimeRemaining: int("estimatedTimeRemaining"),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type CtoExecution = typeof ctoExecutions.$inferSelect;
+export type InsertCtoExecution = typeof ctoExecutions.$inferInsert;
+
+/**
+ * CTO Execution Logs - Real-time logs during execution
+ */
+export const ctoExecutionLogs = mysqlTable("ctoExecutionLogs", {
+  id: int("id").autoincrement().primaryKey(),
+  executionId: int("executionId").notNull().references(() => ctoExecutions.id, { onDelete: "cascade" }),
+  
+  // Log
+  level: mysqlEnum("level", ["info", "warning", "error", "success"]).default("info"),
+  message: text("message").notNull(),
+  details: text("details"), // JSON
+  
+  // Progress
+  progressPercent: int("progressPercent"),
+  estimatedTimeRemaining: int("estimatedTimeRemaining"),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type CtoExecutionLog = typeof ctoExecutionLogs.$inferSelect;
+export type InsertCtoExecutionLog = typeof ctoExecutionLogs.$inferInsert;

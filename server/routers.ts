@@ -5,6 +5,7 @@ import { publicProcedure, router } from "./_core/trpc";
 import { stripeRouter } from "./routers/stripe";
 import { adminRouter } from "./routers/admin";
 import { onboardingRouter } from "./routers/onboarding";
+import { ceoAgentRouter } from "./routers/ceoAgent";
 
 const COOKIE_NAME = "session";
 
@@ -25,6 +26,7 @@ export const appRouter = router({
   stripe: stripeRouter,
   admin: adminRouter,
   onboarding: onboardingRouter,
+  ceoAgent: ceoAgentRouter,
 });
 
 export type AppRouter = typeof appRouter;
