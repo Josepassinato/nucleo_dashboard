@@ -109,7 +109,21 @@ export default function CEODirectives() {
 
   // Send text directive
   const handleSendDirective = async () => {
-    if (!inputValue.trim()) return;
+    const trimmedText = inputValue.trim();
+    
+    // Validation
+    if (!trimmedText) {
+      toast.error("Por favor, digite uma direção");
+      return;
+    }
+    if (trimmedText.length < 10) {
+      toast.error("Direção muito curta (mínimo 10 caracteres)");
+      return;
+    }
+    if (trimmedText.length > 5000) {
+      toast.error("Direção muito longa (máximo 5000 caracteres)");
+      return;
+    }
 
     try {
       await sendDirectiveMutation.mutateAsync({

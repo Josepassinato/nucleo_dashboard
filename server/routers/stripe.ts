@@ -54,6 +54,17 @@ export const stripeRouter = router({
         throw new Error("Invalid plan ID");
       }
 
+      // Rate limiting: max 10 checkout sessions per hour per user
+      const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+      const recentCheckouts = await getPaymentsByUserId(ctx.user.id);
+      const recentCount = recentCheckouts.filter(
+        (p) => new Date(p.createdAt) > oneHourAgo
+      ).length;
+      
+      if (recentCount >= 10) {
+        throw new Error("Too many checkout attempts. Please try again later.");
+      }
+
       try {
         const session = await stripe.checkout.sessions.create({
           payment_method_types: ["card"],
