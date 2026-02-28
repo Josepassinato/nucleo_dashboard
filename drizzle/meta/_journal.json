@@ -43,6 +43,13 @@
       "when": 1772306901825,
       "tag": "0005_steep_edwin_jarvis",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1772307471858,
+      "tag": "0006_sharp_ultimatum",
+      "breakpoints": true
     }
   ]
 }

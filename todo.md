@@ -22,11 +22,19 @@
 - [x] Expandir Schema para CEO Directives, CTO Proposals, Executions
 - [x] Criar CEO Chat Interface (texto + áudio)
 - [x] Implementar CTO Agent com LLM (análise e proposta)
-- [ ] Criar Code Generation Engine
-- [ ] Implementar Testing & Deployment Automation
-- [ ] Criar Monitoring Dashboard em Tempo Real
-- [ ] Implementar Rollback Automático
-- [ ] Integrar e Testar End-to-End
+- [x] Criar Code Generation Engine
+- [x] Implementar Testing & Deployment Automation
+- [x] Criar Monitoring Dashboard em Tempo Real
+- [x] Implementar Rollback Automático
+- [x] Integrar e Testar End-to-End
+
+## LLM Router Inteligente (Nova Feature)
+
+- [x] Expandir Schema para LLM Routing e Analytics
+- [x] Criar LLM Router Engine com Seleção Inteligente de Modelo
+- [x] Implementar Cost & Performance Tracking (tRPC router)
+- [x] Criar LLM Router Dashboard
+- [ ] Testar e Publicar
 
 ## Features Concluídas
 

@@ -6,6 +6,7 @@ import { stripeRouter } from "./routers/stripe";
 import { adminRouter } from "./routers/admin";
 import { onboardingRouter } from "./routers/onboarding";
 import { ceoAgentRouter } from "./routers/ceoAgent";
+import { llmRouterRouter } from "./routers/llmRouter";
 
 const COOKIE_NAME = "session";
 
@@ -27,6 +28,7 @@ export const appRouter = router({
   admin: adminRouter,
   onboarding: onboardingRouter,
   ceoAgent: ceoAgentRouter,
+  llmRouter: llmRouterRouter,
 });
 
 export type AppRouter = typeof appRouter;

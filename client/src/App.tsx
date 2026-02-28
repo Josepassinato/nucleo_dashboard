@@ -16,6 +16,7 @@ import FAQ from "./pages/FAQ";
 import OnboardingInteractive from "./pages/OnboardingInteractive";
 import CEODirectives from "./pages/CEODirectives";
 import ExecutionMonitor from "./pages/ExecutionMonitor";
+import LLMRouterDashboard from "./pages/LLMRouterDashboard";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -33,6 +34,7 @@ function Router() {
       <Route path={"/onboarding-interactive"} component={OnboardingInteractive} />
       <Route path={"/ceo-directives"} component={CEODirectives} />
       <Route path={"/execution-monitor"} component={ExecutionMonitor} />
+      <Route path={"/llm-router"} component={LLMRouterDashboard} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />

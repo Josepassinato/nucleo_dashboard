@@ -427,3 +427,101 @@ export const ctoExecutionLogs = mysqlTable("ctoExecutionLogs", {
 
 export type CtoExecutionLog = typeof ctoExecutionLogs.$inferSelect;
 export type InsertCtoExecutionLog = typeof ctoExecutionLogs.$inferInsert;
+
+
+/**
+ * LLM Skills - Defines different LLM tasks/skills
+ */
+export const llmSkills = mysqlTable("llmSkills", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 255 }).notNull().unique(), // "analysis", "code_generation", etc
+  description: text("description"),
+  category: varchar("category", { length: 255 }).notNull(), // "analysis", "generation", "optimization"
+  complexity: mysqlEnum("complexity", ["low", "medium", "high"]).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type LlmSkill = typeof llmSkills.$inferSelect;
+export type InsertLlmSkill = typeof llmSkills.$inferInsert;
+
+/**
+ * LLM Routes - Maps skills to specific LLM models with cost/performance data
+ */
+export const llmRoutes = mysqlTable("llmRoutes", {
+  id: int("id").autoincrement().primaryKey(),
+  skillId: int("skillId").notNull().references(() => llmSkills.id, { onDelete: "cascade" }),
+  modelName: varchar("modelName", { length: 255 }).notNull(), // "gpt-4", "gpt-3.5-turbo", "claude-3"
+  provider: varchar("provider", { length: 255 }).notNull(), // "openai", "anthropic", "together"
+  costPer1kTokens: int("costPer1kTokens").notNull(), // in USD cents
+  avgLatencyMs: int("avgLatencyMs"), // milliseconds
+  qualityScore: int("qualityScore"), // 0-100
+  isActive: boolean("isActive").default(true),
+  priority: int("priority").default(0), // higher = preferred
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type LlmRoute = typeof llmRoutes.$inferSelect;
+export type InsertLlmRoute = typeof llmRoutes.$inferInsert;
+
+/**
+ * LLM Invocations - Tracks every LLM call for cost and performance analysis
+ */
+export const llmInvocations = mysqlTable("llmInvocations", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  skillId: int("skillId").notNull().references(() => llmSkills.id, { onDelete: "cascade" }),
+  routeId: int("routeId").notNull().references(() => llmRoutes.id, { onDelete: "cascade" }),
+  modelUsed: varchar("modelUsed", { length: 255 }).notNull(),
+  inputTokens: int("inputTokens"),
+  outputTokens: int("outputTokens"),
+  totalTokens: int("totalTokens"),
+  costUSD: int("costUSD"), // in cents
+  latencyMs: int("latencyMs"),
+  success: boolean("success").default(true),
+  errorMessage: text("errorMessage"),
+  qualityRating: int("qualityRating"), // 1-5
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type LlmInvocation = typeof llmInvocations.$inferSelect;
+export type InsertLlmInvocation = typeof llmInvocations.$inferInsert;
+
+/**
+ * LLM Cost Analytics - Aggregated metrics for cost optimization
+ */
+export const llmCostAnalytics = mysqlTable("llmCostAnalytics", {
+  id: int("id").autoincrement().primaryKey(),
+  skillId: int("skillId").notNull().references(() => llmSkills.id, { onDelete: "cascade" }),
+  period: mysqlEnum("period", ["daily", "weekly", "monthly"]).notNull(),
+  date: varchar("date", { length: 10 }).notNull(), // YYYY-MM-DD
+  totalInvocations: int("totalInvocations"),
+  totalTokens: int("totalTokens"),
+  totalCostUSD: int("totalCostUSD"), // in cents
+  avgLatencyMs: int("avgLatencyMs"),
+  successRate: int("successRate"), // 0-100
+  avgQualityRating: int("avgQualityRating"), // 0-500 (0-5 * 100)
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type LlmCostAnalytic = typeof llmCostAnalytics.$inferSelect;
+export type InsertLlmCostAnalytic = typeof llmCostAnalytics.$inferInsert;
+
+/**
+ * LLM Router Config - User preferences for routing strategy
+ */
+export const llmRouterConfig = mysqlTable("llmRouterConfig", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  skillId: int("skillId").notNull().references(() => llmSkills.id, { onDelete: "cascade" }),
+  strategy: mysqlEnum("strategy", ["cost", "speed", "quality", "balanced"]).notNull(),
+  maxCostPerInvocation: int("maxCostPerInvocation"), // in cents
+  maxLatencyMs: int("maxLatencyMs"),
+  minQualityScore: int("minQualityScore"), // 0-100
+  enableFallback: boolean("enableFallback").default(true),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type LlmRouterConfig = typeof llmRouterConfig.$inferSelect;
+export type InsertLlmRouterConfig = typeof llmRouterConfig.$inferInsert;
