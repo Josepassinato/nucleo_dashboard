@@ -46,18 +46,18 @@ export default function DashboardV2() {
                   transition={{ delay: 0.3 }}
                   className="text-5xl font-black tracking-tighter mb-2 italic"
                 >
-                  +R$ 18.472
+                  Dados em Tempo Real
                 </motion.h2>
-                <p className="text-blue-300 font-bold text-lg">+12,4% vs ontem</p>
+                <p className="text-blue-300 font-bold text-lg">Acesse o Admin Dashboard para métricas completas</p>
               </div>
             </motion.div>
 
             {/* Right: Stats grid */}
             <div className="grid grid-cols-2 gap-4">
               {[
-                { label: "Vendas", value: "212", icon: TrendingUp, color: "green" },
-                { label: "ROAS", value: "4.8×", icon: Zap, color: "orange" },
-                { label: "Alertas", value: "2", icon: AlertCircle, color: "red" },
+                { label: "Status", value: "Ativo", icon: TrendingUp, color: "green" },
+                { label: "Modo", value: "Demo", icon: Zap, color: "orange" },
+                { label: "Versão", value: "2.0", icon: AlertCircle, color: "red" },
                 { label: "Agentes", value: "8", icon: Users, color: "blue" },
               ].map((stat, i) => (
                 <motion.div

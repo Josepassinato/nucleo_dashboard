@@ -74,3 +74,9 @@
 - [ ] Testar WebSocket em Produção
 - [ ] Testar Polling Fallback
 - [ ] Publicar
+
+## Bug Fixes (Prioridade Alta)
+
+- [x] Remover dados mockados do AdminDashboard (HeroBlock e DashboardV2)
+- [x] Substituir por dados reais do banco de dados
+- [ ] Testar dados com transações reais no banco de dados
