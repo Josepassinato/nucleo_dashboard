@@ -8,6 +8,15 @@
 - [x] Criar Página FAQ para Troubleshooting
 - [x] Implementar Analytics para Rastrear Conversões
 
+## Melhorias Estratégicas (Retenção & Growth)
+
+- [x] Expandir Schema do Banco de Dados (user_segments, onboarding_progress, churn_predictions)
+- [x] Implementar Onboarding Interativo com Vídeos (Quick Wins Checklist)
+- [ ] Implementar Segmentação de Usuários (Free Trial, Starter, Pro, Enterprise, Churned)
+- [ ] Implementar Cohort Analysis (retenção por data de signup, plano inicial)
+- [ ] Implementar Predictive Churn (ML model, at-risk dashboard)
+- [ ] Implementar Email Sequence de Onboarding (dias 1, 3, 7, 14)
+
 ## Features Concluídas
 
 - [x] Autenticação OAuth com Manus
