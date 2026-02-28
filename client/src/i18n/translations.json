@@ -1,0 +1,201 @@
+{
+  "pt-BR": {
+    "common": {
+      "language": "Português (Brasil)",
+      "country": "Brasil",
+      "currency": "R$",
+      "currencyCode": "BRL",
+      "dateFormat": "DD/MM/YYYY",
+      "timeFormat": "HH:mm",
+      "timezone": "America/Sao_Paulo"
+    },
+    "header": {
+      "title": "Núcleo Ventures",
+      "subtitle": "Diretoria Autônoma de IA",
+      "lastUpdate": "Última atualização",
+      "killSwitch": "PARAR TUDO",
+      "settings": "Configurações"
+    },
+    "metrics": {
+      "revenueToday": "Receita Hoje",
+      "revenueGrowth": "Crescimento",
+      "totalSales": "Vendas",
+      "averageTicket": "Ticket Médio",
+      "cashToday": "Caixa Hoje",
+      "cashInflow": "Entradas",
+      "cashOutflow": "Saídas",
+      "roas": "ROAS",
+      "churn": "Churn",
+      "grossMargin": "Margem Bruta",
+      "activeCampaigns": "Campanhas Ativas",
+      "dailySpend": "Gasto Diário"
+    },
+    "agents": {
+      "title": "SUA DIRETORIA",
+      "ceo": "CEO",
+      "cmo": "CMO",
+      "cfo": "CFO",
+      "coo": "COO",
+      "cpo": "CPO",
+      "chro": "CHRO",
+      "coach": "Coach",
+      "analyst": "Analista",
+      "score": "Nota",
+      "stress": "Estresse",
+      "status": "Status",
+      "active": "Ativo",
+      "warning": "Alerta",
+      "idle": "Inativo",
+      "error": "Erro"
+    },
+    "actions": {
+      "title": "ÚLTIMAS AÇÕES",
+      "timestamp": "Horário",
+      "agent": "Agente",
+      "action": "Ação",
+      "result": "Resultado",
+      "noActions": "Nenhuma ação registrada"
+    },
+    "vision": {
+      "title": "DEFINIR NOVA VISÃO",
+      "subtitle": "A IA irá decompor sua ordem para toda a diretoria.",
+      "placeholder": "Ex: Quero focar em retenção este mês. O lucro deve vir de LTV, não de novos anúncios. Ajustem os orçamentos.",
+      "submit": "DISSEMINAR VISÃO 🚀",
+      "cancel": "Cancelar",
+      "processing": "PROCESSANDO...",
+      "success": "Visão disseminada com sucesso!",
+      "error": "Erro ao processar visão",
+      "impact": "Impacto Estimado na Estrutura"
+    },
+    "integrations": {
+      "title": "Integrações Nativas",
+      "mercadoLivre": "Mercado Livre",
+      "stripe": "Stripe",
+      "twilio": "Twilio",
+      "meta": "Meta (Facebook/Instagram)",
+      "gmail": "Gmail",
+      "whatsapp": "WhatsApp",
+      "docusign": "DocuSign",
+      "lgpd": "Conformidade LGPD",
+      "connected": "Conectado",
+      "disconnected": "Desconectado",
+      "connect": "Conectar"
+    },
+    "alerts": {
+      "title": "Alertas Críticos",
+      "roasLow": "2 anúncios com ROAS < 1,5x",
+      "stockCritical": "Estoque virtual crítico em 3 produtos",
+      "paymentFailed": "Falha em processamento de pagamento",
+      "pause": "Pausar agora",
+      "view": "Ver"
+    },
+    "footer": {
+      "version": "Versão",
+      "support": "Suporte",
+      "documentation": "Documentação",
+      "terms": "Termos de Serviço",
+      "privacy": "Política de Privacidade",
+      "lgpd": "LGPD"
+    }
+  },
+  "en-US": {
+    "common": {
+      "language": "English (United States)",
+      "country": "United States",
+      "currency": "$",
+      "currencyCode": "USD",
+      "dateFormat": "MM/DD/YYYY",
+      "timeFormat": "hh:mm A",
+      "timezone": "America/New_York"
+    },
+    "header": {
+      "title": "Núcleo Ventures",
+      "subtitle": "Autonomous AI Board",
+      "lastUpdate": "Last update",
+      "killSwitch": "KILL ALL",
+      "settings": "Settings"
+    },
+    "metrics": {
+      "revenueToday": "Revenue Today",
+      "revenueGrowth": "Growth",
+      "totalSales": "Sales",
+      "averageTicket": "Average Ticket",
+      "cashToday": "Cash Today",
+      "cashInflow": "Inflows",
+      "cashOutflow": "Outflows",
+      "roas": "ROAS",
+      "churn": "Churn",
+      "grossMargin": "Gross Margin",
+      "activeCampaigns": "Active Campaigns",
+      "dailySpend": "Daily Spend"
+    },
+    "agents": {
+      "title": "YOUR BOARD",
+      "ceo": "CEO",
+      "cmo": "CMO",
+      "cfo": "CFO",
+      "coo": "COO",
+      "cpo": "CPO",
+      "chro": "CHRO",
+      "coach": "Coach",
+      "analyst": "Analyst",
+      "score": "Score",
+      "stress": "Stress",
+      "status": "Status",
+      "active": "Active",
+      "warning": "Warning",
+      "idle": "Idle",
+      "error": "Error"
+    },
+    "actions": {
+      "title": "RECENT ACTIONS",
+      "timestamp": "Time",
+      "agent": "Agent",
+      "action": "Action",
+      "result": "Result",
+      "noActions": "No actions recorded"
+    },
+    "vision": {
+      "title": "SET NEW VISION",
+      "subtitle": "AI will break down your command for the entire board.",
+      "placeholder": "Ex: I want to focus on retention this month. Profit should come from LTV, not new ads. Adjust budgets.",
+      "submit": "DISSEMINATE VISION 🚀",
+      "cancel": "Cancel",
+      "processing": "PROCESSING...",
+      "success": "Vision disseminated successfully!",
+      "error": "Error processing vision",
+      "impact": "Estimated Impact on Structure"
+    },
+    "integrations": {
+      "title": "Native Integrations",
+      "mercadoLivre": "Mercado Livre",
+      "amazon": "Amazon",
+      "stripe": "Stripe",
+      "twilio": "Twilio",
+      "meta": "Meta (Facebook/Instagram)",
+      "gmail": "Gmail",
+      "whatsapp": "WhatsApp",
+      "docusign": "DocuSign",
+      "ccpa": "CCPA Compliance",
+      "connected": "Connected",
+      "disconnected": "Disconnected",
+      "connect": "Connect"
+    },
+    "alerts": {
+      "title": "Critical Alerts",
+      "roasLow": "2 ads with ROAS < 1.5x",
+      "stockCritical": "Virtual stock critical on 3 products",
+      "paymentFailed": "Payment processing failure",
+      "pause": "Pause now",
+      "view": "View"
+    },
+    "footer": {
+      "version": "Version",
+      "support": "Support",
+      "documentation": "Documentation",
+      "terms": "Terms of Service",
+      "privacy": "Privacy Policy",
+      "ccpa": "CCPA"
+    }
+  }
+}
