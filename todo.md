@@ -78,9 +78,5 @@
 ## Bug Fixes (Prioridade Alta)
 
 - [x] Remover dados mockados do AdminDashboard (HeroBlock e DashboardV2)
-- [x] Remover dados mockados de StatusCards (Caixa, Saúde, Alertas)
-- [x] Remover dados mockados de OrganizationalChart (Agentes)
-- [x] Remover dados mockados de ActionTimeline (Ações)
-- [x] Remover dados mockados de VisionModalV2
 - [x] Substituir por dados reais do banco de dados
 - [ ] Testar dados com transações reais no banco de dados
