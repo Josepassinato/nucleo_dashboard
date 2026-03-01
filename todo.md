@@ -80,3 +80,42 @@
 - [x] Remover dados mockados do AdminDashboard (HeroBlock e DashboardV2)
 - [x] Substituir por dados reais do banco de dados
 - [ ] Testar dados com transações reais no banco de dados
+
+
+## Pre-Deploy Checklist (Prioridade Crítica)
+
+### Fase 1: Remover Dados Mockados
+- [x] Remover dados mockados de StatusCards (substituído por dados reais)
+- [x] Remover dados mockados de HeroBlock (substituído por dados reais)
+- [x] Verificar se todos os componentes têm loading states
+
+### Fase 2: Implementar Backend
+- [x] Criar tabela de agentes (agents) no banco de dados
+- [x] Criar tabela de ações (actions) no banco de dados
+- [x] Implementar API para listar agentes (agentsRouter)
+- [x] Implementar API para listar ações (agentsRouter)
+- [x] Implementar API para estatísticas de agentes
+- [x] Implementar API para logs de ações
+
+### Fase 3: Testar Fluxos Principais
+- [x] Criar testes de integração (integration.test.ts)
+- [x] Testar criação e recuperação de usuários
+- [x] Testar criação de agentes
+- [x] Testar criação de ações
+- [x] Testar listagem de agentes e ações
+- [x] Todos os testes passando (6/6)
+
+### Fase 4: Configurar Produção
+- [x] Criar guia de setup de produção (PRODUCTION_SETUP.md)
+- [x] Documentar todas as variáveis de ambiente
+- [x] Criar checklist pré-deploy
+- [x] Documentar passos de deployment
+- [ ] Verificar variáveis de ambiente no Management UI
+- [ ] Testar build de produção
+
+### Fase 5: Deploy Final
+- [ ] Fazer checkpoint final
+- [ ] Sincronizar com GitHub
+- [ ] Publicar via Management UI
+- [ ] Testar aplicação em produção
+- [ ] Monitorar erros e performance

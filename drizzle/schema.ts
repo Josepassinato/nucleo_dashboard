@@ -525,3 +525,91 @@ export const llmRouterConfig = mysqlTable("llmRouterConfig", {
 
 export type LlmRouterConfig = typeof llmRouterConfig.$inferSelect;
 export type InsertLlmRouterConfig = typeof llmRouterConfig.$inferInsert;
+
+
+/**
+ * Agents - represents autonomous AI agents in the organization
+ * CEO, CMO, CFO, COO, CPO, CHRO, Coach, Analyst, Optimizer
+ */
+export const agents = mysqlTable("agents", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  // Agent identity
+  name: varchar("name", { length: 255 }).notNull(), // CEO, CMO, CFO, etc
+  title: varchar("title", { length: 255 }).notNull(), // Full title
+  description: text("description"), // Agent description and responsibilities
+  avatar: varchar("avatar", { length: 255 }), // Avatar URL
+  // Agent status
+  status: mysqlEnum("status", ["active", "inactive", "paused"]).default("active").notNull(),
+  // Performance metrics
+  tasksCompleted: int("tasksCompleted").default(0),
+  successRate: int("successRate").default(0), // 0-100
+  averageResponseTimeMs: int("averageResponseTimeMs").default(0),
+  // Configuration
+  capabilities: text("capabilities"), // JSON array of capabilities
+  permissions: text("permissions"), // JSON array of permissions
+  // Metadata
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Agent = typeof agents.$inferSelect;
+export type InsertAgent = typeof agents.$inferInsert;
+
+/**
+ * Actions - tracks all autonomous actions performed by agents
+ * Includes task execution, decisions, and system changes
+ */
+export const actions = mysqlTable("actions", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  agentId: int("agentId").notNull().references(() => agents.id, { onDelete: "cascade" }),
+  // Action details
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
+  actionType: mysqlEnum("actionType", [
+    "task_execution",
+    "decision",
+    "recommendation",
+    "alert",
+    "system_change",
+    "report_generation",
+    "integration_sync",
+    "other"
+  ]).notNull(),
+  // Status and result
+  status: mysqlEnum("status", ["pending", "in_progress", "completed", "failed", "cancelled"]).default("pending").notNull(),
+  result: text("result"), // JSON with action result/output
+  errorMessage: text("errorMessage"), // Error details if failed
+  // Impact
+  impactLevel: mysqlEnum("impactLevel", ["low", "medium", "high", "critical"]).default("medium").notNull(),
+  affectedMetrics: text("affectedMetrics"), // JSON array of affected metrics
+  // Timeline
+  scheduledFor: timestamp("scheduledFor"),
+  startedAt: timestamp("startedAt"),
+  completedAt: timestamp("completedAt"),
+  durationMs: int("durationMs"), // Duration in milliseconds
+  // Metadata
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Action = typeof actions.$inferSelect;
+export type InsertAction = typeof actions.$inferInsert;
+
+/**
+ * Action Logs - detailed logs for each action for debugging and audit
+ */
+export const actionLogs = mysqlTable("actionLogs", {
+  id: int("id").autoincrement().primaryKey(),
+  actionId: int("actionId").notNull().references(() => actions.id, { onDelete: "cascade" }),
+  // Log entry
+  level: mysqlEnum("level", ["debug", "info", "warning", "error"]).notNull(),
+  message: text("message").notNull(),
+  metadata: text("metadata"), // JSON with additional context
+  // Timestamp
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type ActionLog = typeof actionLogs.$inferSelect;
+export type InsertActionLog = typeof actionLogs.$inferInsert;

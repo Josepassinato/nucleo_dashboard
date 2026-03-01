@@ -7,6 +7,7 @@ import { adminRouter } from "./routers/admin";
 import { onboardingRouter } from "./routers/onboarding";
 import { ceoAgentRouter } from "./routers/ceoAgent";
 import { llmRouterRouter } from "./routers/llmRouter";
+import { agentsRouter } from "./routers/agents";
 
 const COOKIE_NAME = "session";
 
@@ -29,6 +30,7 @@ export const appRouter = router({
   onboarding: onboardingRouter,
   ceoAgent: ceoAgentRouter,
   llmRouter: llmRouterRouter,
+  agents: agentsRouter,
 });
 
 export type AppRouter = typeof appRouter;
