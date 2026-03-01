@@ -7,6 +7,14 @@ export default function DashboardFooter() {
   const [showVisionModal, setShowVisionModal] = useState(false);
   const [vision, setVision] = useState("");
 
+  const handleLeaderboard = () => {
+    alert("Leaderboard completo será lançado em breve.");
+  };
+
+  const handleSettings = () => {
+    alert("Configurações de limites será lançado em breve.");
+  };
+
   return (
     <>
       <motion.div
@@ -26,10 +34,16 @@ export default function DashboardFooter() {
 
         {/* Links */}
         <div className="flex gap-6 text-sm">
-          <button className="text-muted-foreground hover:text-emerald-400 transition-colors font-medium">
+          <button 
+            onClick={handleLeaderboard}
+            className="text-muted-foreground hover:text-emerald-400 transition-colors font-medium cursor-pointer"
+          >
             Ver Leaderboard Completo
           </button>
-          <button className="text-muted-foreground hover:text-emerald-400 transition-colors font-medium">
+          <button 
+            onClick={handleSettings}
+            className="text-muted-foreground hover:text-emerald-400 transition-colors font-medium cursor-pointer"
+          >
             Configurações de Limites
           </button>
         </div>
@@ -71,6 +85,7 @@ export default function DashboardFooter() {
               <Button
                 onClick={() => {
                   console.log("Nova visão definida:", vision);
+                  alert("Visão definida com sucesso! Os agentes ajustarão suas ações.");
                   setShowVisionModal(false);
                   setVision("");
                 }}

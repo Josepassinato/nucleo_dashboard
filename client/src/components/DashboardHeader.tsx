@@ -56,21 +56,6 @@ export default function DashboardHeader() {
           transition={{ duration: 0.5, delay: 0.2 }}
           className="flex items-center gap-4"
         >
-          {/* Kill Switch */}
-          <Button
-            variant="destructive"
-            size="sm"
-            className="gap-2 border-2 border-red-600 hover:bg-red-700 hover:border-red-700"
-            onClick={() => {
-              if (confirm("Tem certeza que deseja ativar o KILL SWITCH? Todas as operações serão pausadas.")) {
-                console.log("Kill switch ativado!");
-              }
-            }}
-          >
-            <Power className="w-4 h-4" />
-            <span className="hidden sm:inline">KILL ALL</span>
-          </Button>
-
           {/* Avatar */}
           <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center cursor-pointer hover:ring-2 hover:ring-emerald-500 transition-all">
             <span className="text-white font-bold text-sm">JC</span>
