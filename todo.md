@@ -119,3 +119,13 @@
 - [ ] Publicar via Management UI
 - [ ] Testar aplicação em produção
 - [ ] Monitorar erros e performance
+
+
+## Correções Finais (Prioridade Crítica)
+
+- [x] Corrigir link "Ver Dashboard V2" - Rota /v2 funciona
+- [x] Remover KILL button de HeaderV2
+- [x] Testar login/logout completo - Logout menu implementado e testado
+- [ ] Testar fluxo de pagamento Stripe (checkout e webhook)
+- [ ] Adicionar dados de teste ao banco (agentes, ações, transações)
+- [ ] Testar em produção antes de publicar

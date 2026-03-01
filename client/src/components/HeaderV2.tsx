@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Power, Settings } from "lucide-react";
+import { Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function HeaderV2() {
@@ -40,13 +40,6 @@ export default function HeaderV2() {
             className="text-gray-400 hover:text-white hover:bg-blue-500/10 rounded-lg"
           >
             <Settings className="w-5 h-5" />
-          </Button>
-          <Button
-            variant="destructive"
-            className="bg-red-600/20 hover:bg-red-600/30 border border-red-500/50 text-red-400 hover:text-red-300 gap-2 rounded-lg"
-          >
-            <Power className="w-4 h-4" />
-            <span className="font-bold text-xs">KILL</span>
           </Button>
         </motion.div>
       </div>

@@ -1,13 +1,16 @@
 import { Button } from "@/components/ui/button";
-import { AlertTriangle, Moon, Sun, Power } from "lucide-react";
+import { Moon, Sun, LogOut } from "lucide-react";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useTheme } from "@/contexts/ThemeContext";
+import { useAuth } from "@/_core/hooks/useAuth";
 
 export default function DashboardHeader() {
   const [currentTime, setCurrentTime] = useState<string>("");
   const [lastUpdate, setLastUpdate] = useState<string>("há 2 min");
+  const [showMenu, setShowMenu] = useState(false);
   const { theme, toggleTheme } = useTheme();
+  const { logout } = useAuth();
 
   useEffect(() => {
     const updateTime = () => {
@@ -56,16 +59,42 @@ export default function DashboardHeader() {
           transition={{ duration: 0.5, delay: 0.2 }}
           className="flex items-center gap-4"
         >
-          {/* Avatar */}
-          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center cursor-pointer hover:ring-2 hover:ring-emerald-500 transition-all">
-            <span className="text-white font-bold text-sm">JC</span>
+          {/* Avatar with Menu */}
+          <div className="relative">
+            <button
+              onClick={() => setShowMenu(!showMenu)}
+              className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center cursor-pointer hover:ring-2 hover:ring-emerald-500 transition-all"
+            >
+              <span className="text-white font-bold text-sm">JC</span>
+            </button>
+            {showMenu && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="absolute right-0 mt-2 w-48 bg-background border border-border rounded-lg shadow-lg z-50"
+              >
+                <button
+                  onClick={() => {
+                    logout();
+                    setShowMenu(false);
+                  }}
+                  className="w-full px-4 py-2 text-left text-sm text-foreground hover:bg-accent flex items-center gap-2 rounded-lg"
+                >
+                  <LogOut className="w-4 h-4" />
+                  Logout
+                </button>
+              </motion.div>
+            )}
           </div>
 
           {/* Theme Toggle */}
           <Button
             variant="ghost"
             size="sm"
-            onClick={toggleTheme}
+            onClick={() => {
+              if (toggleTheme) toggleTheme();
+              setShowMenu(false);
+            }}
             className="rounded-lg"
           >
             {theme === "dark" ? (
